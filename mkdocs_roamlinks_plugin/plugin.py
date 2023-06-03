@@ -43,7 +43,7 @@ class AutoLinkReplacer:
         # Find directory URL to target link
         rel_link_url = ''
         # Walk through all files in docs directory to find a matching file
-        for root, dirs, files in os.walk(self.base_docs_url):
+        for root, dirs, files in os.walk(self.base_docs_url, followlinks=True):
             for name in files:
                 # If we have a match, create the relative path from linker to the link
                 if name == filename:
@@ -122,7 +122,7 @@ class RoamLinkReplacer:
                     if title:
                         rel_link_url = rel_link_url + '#' + format_title
             else:
-                for root, dirs, files in os.walk(self.base_docs_url):
+                for root, dirs, files in os.walk(self.base_docs_url, followlinks=True):
                     for name in files:
                         # If we have a match, create the relative path from linker to the link
                         if self.simplify(name) == self.simplify(filename):
