@@ -16,7 +16,7 @@ log.addFilter(mkdocs.utils.warning_filter)
 #       3: Filename e.g. filename.md
 #       4: File extension e.g. .md, .png, etc.
 #       5. hash anchor e.g. #my-sub-heading-link
-AUTOLINK_RE = r'\[([^\]]+)\]\((([^)/]+\.(md|png|jpg|pdf))(#.*)*)\)'
+AUTOLINK_RE = r'\[([^\]]+)\]\((([^)/]+\.(md|png|jpg))(#.*)*)\)'
 
 # For Regex, match groups are:
 #       0: Whole roamlike link e.g. [[filename#title|alias|widthxheight]]
@@ -25,7 +25,13 @@ AUTOLINK_RE = r'\[([^\]]+)\]\((([^)/]+\.(md|png|jpg|pdf))(#.*)*)\)'
 #       3: alias
 #       4: width
 #       5: height
-ROAMLINK_RE = r"""\[\[(.*?)(\#.*?)?(?:\|([\D][^\|\]]+[\d]*))?(?:\|(\d+)(?:x(\d+))?)?\]\]"""
+ROAMLINK_RE = r"""\[\[(?!.*\.pdf)(.*?)(\#.*?)?(?:\|([\D][^\|\]]+[\d]*))?(?:\|(\d+)(?:x(\d+))?)?\]\]"""
+
+# For Regex, match groups are:
+#       0: Whole roamlike link e.g. [[filename.pdf#height=100]]
+#       1: Filename e.g. filename.pdf
+#       2: #height=<number> e.g. #height=100
+ROAMLINK_PDF_RE = r"""\[\[(.*?\.pdf)(\#height=\d+)?\]\]"""
 
 class AutoLinkReplacer:
     def __init__(self, base_docs_url, page_url):
@@ -165,6 +171,61 @@ class RoamLinkReplacer:
         return link
 
 
+class RoamLinkPDFReplacer:
+    def __init__(self, base_docs_url, page_url):
+        self.base_docs_url = base_docs_url
+        self.page_url = page_url
+
+    def __call__(self, match):
+        # Name of the markdown file
+        whole_link = match.group(0)
+        filename = match.group(1).strip() if match.group(1) else ""
+        height = match.group(2).strip() if match.group(2) else ""
+
+        # Absolute URL of the linker
+        abs_linker_url = os.path.dirname(
+            os.path.join(self.base_docs_url, self.page_url))
+
+        # Find directory URL to target link
+        rel_link_url = ''
+        # Walk through all files in docs directory to find a matching file
+        if filename:
+            if '/' in filename:
+                if 'http' in filename: # http or https
+                    rel_link_url = filename
+                else:
+                    rel_file = filename
+
+                    abs_link_url = os.path.dirname(os.path.join(
+                        self.base_docs_url, rel_file))
+                    # Constructing relative path from the linker to the link
+                    rel_link_url = os.path.join(
+                            os.path.relpath(abs_link_url, abs_linker_url), os.path.basename(rel_file))
+                    if height:
+                        rel_link_url = rel_link_url + height
+            else:
+                for root, dirs, files in os.walk(self.base_docs_url, followlinks=True):
+                    for name in files:
+                        # If we have a match, create the relative path from linker to the link
+                        if name == filename:
+                            # Absolute path to the file we want to link to
+                            abs_link_url = os.path.dirname(os.path.join(
+                                root, name))
+                            # Constructing relative path from the linker to the link
+                            rel_link_url = os.path.join(
+                                    os.path.relpath(abs_link_url, abs_linker_url), name)
+                            if height:
+                                rel_link_url = rel_link_url + height
+            if rel_link_url == '':
+                log.warning(f"RoamLinksPlugin unable to find {filename} in directory {self.base_docs_url}")
+                return whole_link
+
+        # Construct the return link
+        # Windows escapes "\" unintentionally, and it creates incorrect links, so need to replace with "/"
+        rel_link_url = rel_link_url.replace("\\", "/")
+
+        return f'[[{rel_link_url}]]'
+
 class RoamLinksPlugin(BasePlugin):
     def on_page_markdown(self,
                          markdown,
@@ -184,5 +245,7 @@ class RoamLinksPlugin(BasePlugin):
                           AutoLinkReplacer(base_docs_url, page_url), markdown)
         markdown = re.sub(ROAMLINK_RE,
                           RoamLinkReplacer(base_docs_url, page_url), markdown)
+        markdown = re.sub(ROAMLINK_PDF_RE,
+                          RoamLinkPDFReplacer(base_docs_url, page_url), markdown)
 
         return markdown
