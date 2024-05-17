@@ -6,13 +6,13 @@ An MkDocs plugin that simplifies relative linking between documents and convert 
 
 Install the plugin using pip:
 
-`pip install mkdocs-roamlinks-plugin`
+`pip install mkdocs-roamlinks-with-pdf-plugin`
 
 Activate the plugin in `mkdocs.yml`:
 ```yaml
 plugins:
   - search
-  - roamlinks 
+  - roamlinks-with-pdf
 ```
 
 ## Usage
@@ -25,6 +25,7 @@ To use this plugin, simply create a link that only contains the filename of file
 | `[[Git Flow]]`            | `[Git Flow](../software/git_flow.md)` |
 | `[[software/Git Flow]]`   | `[software/Git Flow](../software/git_flow.md)` |
 | `![[image.png]]`           | `![image.png](../image/imag.png)`      |
+| `![[doc.pdf]]`           | `![doc.pdf](../image/doc.pdf)`      |
 | `[[#Heading identifiers]]` | `[Heading identifiers in HTML](#heading-identifiers-in-html)`|
 | `[[Git Flow#Heading]]`     |  `[Git Flow](../software/git_flow.md#heading)` |
 | `![[image.png\|Description\|800x600]]` | `![Description](image.png){ width="600"; height="800" }` |

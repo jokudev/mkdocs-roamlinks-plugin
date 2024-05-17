@@ -16,7 +16,7 @@ log.addFilter(mkdocs.utils.warning_filter)
 #       3: Filename e.g. filename.md
 #       4: File extension e.g. .md, .png, etc.
 #       5. hash anchor e.g. #my-sub-heading-link
-AUTOLINK_RE = r'\[([^\]]+)\]\((([^)/]+\.(md|png|jpg))(#.*)*)\)'
+AUTOLINK_RE = r'\[([^\]]+)\]\((([^)/]+\.(md|png|jpg|pdf))(#.*)*)\)'
 
 # For Regex, match groups are:
 #       0: Whole roamlike link e.g. [[filename#title|alias|widthxheight]]

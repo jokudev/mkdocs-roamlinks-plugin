@@ -1,14 +1,14 @@
 from setuptools import setup, find_packages
 
 setup(
-    name='mkdocs-roamlinks-plugin',
-    version='0.3.2',
+    name='mkdocs-roamlinks-with-pdf-plugin',
+    version='1.0.0',
     description='An MkDocs plugin',
     long_description='An MkDocs plugin that automagically generates relative links and convert roamlike links for foam and obsidian between markdown pages',
     keywords='mkdocs',
-    url= 'https://github.com/Jackiexiao/mkdocs-roamlinks-plugin',
-    author='jackiexiao',
-    author_email='707610215@qq.com',
+    url= 'https://github.com/jokulab/mkdocs-roamlinks-plugin',
+    author='jokulab',
+    author_email='166611085+jokudev@users.noreply.github.com',
     license='MIT',
     python_requires='>=3.6',
     install_requires=[
@@ -29,7 +29,7 @@ setup(
     packages=find_packages(),
     entry_points={
         'mkdocs.plugins': [
-            'roamlinks = mkdocs_roamlinks_plugin.plugin:RoamLinksPlugin',
+            'roamlinks-with-pdf = mkdocs_roamlinks_with_pdf_plugin.plugin:RoamLinksPlugin',
         ]
     }
 )
