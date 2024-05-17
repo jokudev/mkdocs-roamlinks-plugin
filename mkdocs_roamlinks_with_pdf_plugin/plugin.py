@@ -7,7 +7,6 @@ from mkdocs.plugins import BasePlugin
 import mkdocs.utils
 
 log = logging.getLogger(f"mkdocs.plugins.{__name__}")
-log.addFilter(mkdocs.utils.warning_filter)
 
 # For Regex, match groups are:
 #       0: Whole markdown link e.g. [Alt-text](url)

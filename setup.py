@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='mkdocs-roamlinks-with-pdf-plugin',
-    version='2.0.0',
+    version='2.0.1',
     description='An MkDocs plugin',
     long_description='An MkDocs plugin that automagically generates relative links and convert roamlike links for foam and obsidian between markdown pages',
     keywords='mkdocs',
